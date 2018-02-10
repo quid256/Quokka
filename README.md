@@ -1,2 +1,2 @@
 # UCH_BeNice
-An app that helps people be nice
+An app that helps people be nicer
