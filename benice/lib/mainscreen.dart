@@ -4,48 +4,70 @@ Color _lightPurple = Colors.deepPurple[200];
 Color _midPurple   = Colors.deepPurple[300];
 Color _darkPurple  = Colors.deepPurple[400];
 
-
 class Goal extends StatefulWidget {
   final String message;
-  Goal({Key key, this.message}) : super(key: key);
+  Goal({Key key, this.message }) : super(key: key);
 
   @override
   _Goal createState() => new _Goal();
 }
 
 class _Goal extends State<Goal> {
+
+  bool isCompleted = false;  
+
+  void completeGoal() {
+    setState(() {
+      isCompleted = ! isCompleted;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return new Container(
-      decoration: new BoxDecoration(
-        borderRadius: new BorderRadius.only(
-          topRight: new Radius.circular(50.0),
-          bottomRight: new Radius.circular(50.0),
-          bottomLeft: new Radius.circular(50.0)
-        ),
-        color: Colors.white
-      ),
-      margin: const EdgeInsets.symmetric(vertical: 7.0),
-      child: new Row(
-        children: <Widget>[
-          new IconButton(
-            icon: new Icon(
-              Icons.check_circle,
-              color: _midPurple,
-            ),
-            iconSize: 60.0,
-            onPressed: null,
+
+    Color bgColor, accentColor;
+    if (isCompleted) {
+      bgColor = Colors.deepPurple[100];
+      accentColor = Colors.white;
+    } else {
+      bgColor = Colors.white;
+      accentColor = _midPurple;
+    }
+
+
+    return new GestureDetector(
+      onTapDown: (tdd) => completeGoal(),
+      child: new Container(
+        decoration: new BoxDecoration(
+          borderRadius: new BorderRadius.only(
+            topRight: new Radius.circular(50.0),
+            bottomRight: new Radius.circular(50.0),
+            bottomLeft: new Radius.circular(50.0)
           ),
-          new Text(
-            widget.message,
-            style: new TextStyle(
-              color: _midPurple,
-              fontSize: 20.0,
-              fontWeight: FontWeight.w300,
-              fontFamily: "Open Sans"
+          color: bgColor
+        ),
+        margin: const EdgeInsets.symmetric(vertical: 7.0),
+        child: new Row(
+          children: <Widget>[
+            new IconButton(
+              icon: new Icon(
+                isCompleted ? Icons.check_circle : Icons.fiber_manual_record,
+                color: accentColor,
+              ),
+              iconSize: 60.0,
+              onPressed: null,
+            ),
+            new Text(
+              widget.message,
+              style: new TextStyle(
+                color: accentColor,
+                fontSize: 20.0,
+                fontWeight: isCompleted ? FontWeight.w400 : FontWeight.w300,
+                fontFamily: "Open Sans"
+              )
             )
-          )
-        ],
+          ],
+        )
       )
     );
   }
@@ -68,10 +90,49 @@ class _MainPage extends State<MainPage> {
 
     Widget buildProfile() {
       return new Expanded(
-        child: new Container(
-          padding: const EdgeInsets.all(32.0),
-          child: new Text("helooo")
-        ),
+        child: new Center(
+          child: new Container(
+            child: new Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                new Icon(
+                  Icons.account_circle,
+                  size: 175.0,
+                  color: _midPurple
+                ),
+                new Padding(
+                  padding: new EdgeInsets.only(bottom: 5.0),
+                  child: new Text(
+                    "john doe",
+                    style: new TextStyle(
+                      color: _darkPurple,
+                      fontSize: 25.0,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: "Open Sans"
+                    )
+                  ),
+                ),
+                new Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    new Text(
+                      "1285|",
+                      style: new TextStyle(
+                        color: _midPurple,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w300,
+                        fontFamily: "Open Sans"
+                      )
+                    )
+                  ],
+                )
+              ],
+            )
+          )
+          
+          
+        )
+      
       );
     }
 
@@ -125,7 +186,12 @@ class _MainPage extends State<MainPage> {
     }
     return new Scaffold(
       body: new Container(
-        color: new Color(0xFFFCFCFC),
+        decoration: new BoxDecoration(
+          image: new DecorationImage(
+            image: new AssetImage("images/Net3-01.png"),
+            // colorFilter: new ColorFilter.mode(new Color(0xBBFFFFFF), BlendMode.srcOver)
+          )
+        ),
         padding: const EdgeInsets.all(12.0),
         child: new Column(
           children: <Widget>[
