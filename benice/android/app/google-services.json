@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "471566130745",
+    "firebase_url": "https://benice-63ca9.firebaseio.com",
+    "project_id": "benice-63ca9",
+    "storage_bucket": "benice-63ca9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:471566130745:android:d03ec8f01247a411",
+        "android_client_info": {
+          "package_name": "com.example.benice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "471566130745-pgk9e8ebikuo70r551214fl4929naj2i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.benice",
+            "certificate_hash": "c2498a79d541ed1c9c070fde4a870b466345f19a"
+          }
+        },
+        {
+          "client_id": "471566130745-kg6e3pnlsgui77mbm09up8eej4jev9g5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALUAWdfDh0EdeTY3SPeAdh2OWgXcxJvKU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "471566130745-kg6e3pnlsgui77mbm09up8eej4jev9g5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
