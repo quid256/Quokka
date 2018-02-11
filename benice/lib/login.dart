@@ -38,7 +38,6 @@ class _LoginPage extends State<LoginPage> {
                 colors: [_lightPurple, _darkPurple],
               )
           ),
-          child: ,
 
       );
     }
