@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: 'Be Nice',
-      initialRoute: '/',
+      initialRoute: '/login',
       routes: <String, WidgetBuilder> {
         '/': (BuildContext context) => new MainPage(googleSignIn: googleSignIn),
         '/login': (BuildContext context) => new LoginPage(googleSignIn: googleSignIn, auth: auth)

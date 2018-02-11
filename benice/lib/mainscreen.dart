@@ -207,6 +207,7 @@ class User {
 
 class MainPage extends StatefulWidget {
   final GoogleSignIn googleSignIn;
+  final isDebug = false;
   final userReference = FirebaseDatabase.instance.reference().child('users');
 
   MainPage({Key key, this.googleSignIn}) : super(key: key);
@@ -247,9 +248,12 @@ class _MainPage extends State<MainPage> {
                       onTap: () {
                         widget.userReference.push().set(new User(1285, "quidnovum@gmail.com", 85).toJson());
                       },
-                      child: new CircleAvatar(
+                      child: !widget.isDebug ? new CircleAvatar(
                         backgroundImage:
                         new NetworkImage(widget.googleSignIn.currentUser.photoUrl)
+                      ) : new Icon(
+                        Icons.account_circle,
+                        size: 200.0
                       )
                     )
                     
@@ -258,7 +262,7 @@ class _MainPage extends State<MainPage> {
                 new Padding(
                   padding: new EdgeInsets.only(bottom: 5.0),
                   child: new Text(
-                    widget.googleSignIn.currentUser.displayName,
+                    !widget.isDebug ? widget.googleSignIn.currentUser.displayName : "john doe",
                     style: new TextStyle(
                       color: _darkPurple,
                       fontSize: 25.0,
