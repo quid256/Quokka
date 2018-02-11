@@ -4,10 +4,10 @@ import 'mainscreen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';         //new
-import 'package:firebase_database/ui/firebase_animated_list.dart'; //new
 
-void main() => runApp(new MyApp());
+void main() {
+  runApp(new MyApp());
+}
 
 // Google - Firebase Login
 final googleSignIn = new GoogleSignIn();
@@ -35,19 +35,34 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Flutter Demo',
-      theme: new ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
-        // counter didn't reset back to zero; the application is not restarted.
-        primarySwatch: Colors.deepOrange,
-      ),
-      home: new LoginPage(title: 'Flutter Demo Home Page'),
+      title: 'Be Nice',
+      home: new MainPage(),
+      initialRoute: '/login',
+      routes: <String, WidgetBuilder> {
+        '/login': (BuildContext context) {
+          return new Container(
+            child: new Scaffold(
+              body: new Center(
+                child: new Container(
+                  child: new FlatButton(
+                    color: Colors.red,
+                    onPressed: () {
+                      _ensureLoggedIn()
+                      ..then((_) {
+                        Navigator.of(context).pop();
+                      })
+                      ..catchError(() {
+                        print("hi");
+                      });
+                    },
+                    child: new Text("login")
+                  )
+                )
+              )
+            )
+          );
+        }
+      },
     );
   }
 }

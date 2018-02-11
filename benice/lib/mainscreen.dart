@@ -75,9 +75,7 @@ class _Goal extends State<Goal> {
 
 
 class MainPage extends StatefulWidget {
-  MainPage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  MainPage({Key key}) : super(key: key);
 
   @override
   _MainPage createState() => new _MainPage();
