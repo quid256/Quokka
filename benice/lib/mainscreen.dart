@@ -4,7 +4,6 @@ Color _lightPurple = Colors.deepPurple[200];
 Color _midPurple   = Colors.deepPurple[300];
 Color _darkPurple  = Colors.deepPurple[400];
 
-
 class Goal extends StatefulWidget {
   final String message;
   Goal({Key key, this.message}) : super(key: key);
