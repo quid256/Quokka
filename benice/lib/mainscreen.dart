@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'dart:math';
 
 
@@ -181,10 +182,30 @@ class _Goal extends State<Goal> {
   }
 }
 
+class User {
+  int score;
+  String gmailaccount;
+  int streak;
+
+  User(this.score, this.gmailaccount, this.streak);
+
+  User.fromSnapshot(DataSnapshot snapshot)
+      : score = snapshot.score,
+        streak = snapshot.value["streak"](),
+        gmailaccount = snapshot.value["gmailaccount"];
+
+  toJson() {
+    return {
+      "score": score,
+      "gmail": gmailaccount,
+      "streak": streak
+    };
+  }
+}
 
 class MainPage extends StatefulWidget {
   final GoogleSignIn googleSignIn;
-
+  final userReference = FirebaseDatabase.instance.reference();
   MainPage({Key key, this.googleSignIn}) : super(key: key);
 
   @override
@@ -203,10 +224,12 @@ class _MainPage extends State<MainPage> {
             child: new Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                new Icon(
-                  Icons.account_circle,
-                  size: 175.0,
-                  color: _midPurple
+                new Container(
+                    margin: const EdgeInsets.only(right: 16.0),
+                    child: new CircleAvatar(
+                        backgroundImage:
+                        new NetworkImage(widget.googleSignIn.currentUser.photoUrl)
+                    )
                 ),
                 new Padding(
                   padding: new EdgeInsets.only(bottom: 5.0),
