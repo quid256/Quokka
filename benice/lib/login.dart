@@ -4,10 +4,9 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 
 // Google - Firebase Login
-final googleSignIn = new GoogleSignIn();
-final auth = FirebaseAuth.instance;
 
-Future<Null> _ensureLoggedIn() async {
+
+Future<Null> _ensureLoggedIn(GoogleSignIn googleSignIn, FirebaseAuth auth) async {
   GoogleSignInAccount user = googleSignIn.currentUser;
   if (user == null)
     user = await googleSignIn.signInSilently();
@@ -31,7 +30,10 @@ Color _darkPurple  = Colors.deepPurple[400];
 
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key}) : super(key: key);
+
+  final GoogleSignIn googleSignIn;
+  final FirebaseAuth auth;
+  LoginPage({Key key, this.googleSignIn, this.auth}) : super(key: key);
 
 
   @override
@@ -41,7 +43,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPage extends State<LoginPage> {
 
   void onLoginButtonPressed(BuildContext context) {
-    _ensureLoggedIn()
+    _ensureLoggedIn(widget.googleSignIn, widget.auth)
     ..then((_) {
       Navigator.of(context).pop();
     })

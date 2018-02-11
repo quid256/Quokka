@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:math';
 
 
@@ -182,7 +183,9 @@ class _Goal extends State<Goal> {
 
 
 class MainPage extends StatefulWidget {
-  MainPage({Key key}) : super(key: key);
+  final GoogleSignIn googleSignIn;
+
+  MainPage({Key key, this.googleSignIn}) : super(key: key);
 
   @override
   _MainPage createState() => new _MainPage();
@@ -208,7 +211,7 @@ class _MainPage extends State<MainPage> {
                 new Padding(
                   padding: new EdgeInsets.only(bottom: 5.0),
                   child: new Text(
-                    "john doe",
+                    widget.googleSignIn.currentUser.displayName,
                     style: new TextStyle(
                       color: _darkPurple,
                       fontSize: 25.0,
