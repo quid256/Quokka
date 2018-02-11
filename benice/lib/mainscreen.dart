@@ -183,6 +183,7 @@ class _Goal extends State<Goal> {
 }
 
 class User {
+  String key;
   int score;
   String gmailaccount;
   int streak;
@@ -190,9 +191,10 @@ class User {
   User(this.score, this.gmailaccount, this.streak);
 
   User.fromSnapshot(DataSnapshot snapshot)
-      : score = snapshot.score,
-        streak = snapshot.value["streak"](),
-        gmailaccount = snapshot.value["gmailaccount"];
+    : key = snapshot.key,
+      score = snapshot.value["score"].toInt(),
+      streak = snapshot.value["streak"].toInt(),
+      gmailaccount = snapshot.value["gmailaccount"];
 
   toJson() {
     return {
@@ -205,7 +207,8 @@ class User {
 
 class MainPage extends StatefulWidget {
   final GoogleSignIn googleSignIn;
-  final userReference = FirebaseDatabase.instance.reference();
+  final userReference = FirebaseDatabase.instance.reference().child('users');
+
   MainPage({Key key, this.googleSignIn}) : super(key: key);
 
   @override
@@ -213,6 +216,20 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPage extends State<MainPage> {
+
+  _MainPage() {
+    // widget.userReference.onChildAdded.listen(_onUserAdded);
+    // widget.userReference.onChildChanged.listen(_onUserChanged);
+
+  }
+
+  // void _onUserAdded(Event e) {
+
+  // }
+
+  // void _onUserChanged(Event e) {
+
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -226,10 +243,17 @@ class _MainPage extends State<MainPage> {
               children: <Widget>[
                 new Container(
                     margin: const EdgeInsets.only(right: 16.0),
-                    child: new CircleAvatar(
+                    child: new GestureDetector(
+                      onTap: () {
+                        widget.userReference.push().set(new User(1285, "quidnovum@gmail.com", 85).toJson());
+                      },
+                      child: new CircleAvatar(
                         backgroundImage:
                         new NetworkImage(widget.googleSignIn.currentUser.photoUrl)
+                      )
                     )
+                    
+                    
                 ),
                 new Padding(
                   padding: new EdgeInsets.only(bottom: 5.0),
