@@ -115,11 +115,16 @@ class _LoginPage extends State<LoginPage> {
             child: new Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                new Icon(
-                  Icons.account_circle,
-                  size: 350.0,
-                  color: Colors.white
+                new Image(
+                  image: new AssetImage(
+                    "images/Logo-01.png"
+                  )
                 ),
+                // new Icon(
+                //   Icons.account_circle,
+                //   size: 350.0,
+                //   color: Colors.white
+                // ),
                 buildLoginButton()
               ]
             )
