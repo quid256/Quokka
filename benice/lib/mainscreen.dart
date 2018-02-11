@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'db.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:math';
 
@@ -10,13 +11,15 @@ Color _darkPurple  = Colors.deepPurple[400];
 
 class Goal extends StatefulWidget {
   final String message;
-  Goal({Key key, this.message }) : super(key: key);
+  final onCompleted;
+
+  Goal({Key key, this.message, this.onCompleted }) : super(key: key);
 
   @override
   _Goal createState() => new _Goal();
 
   // Random Goal Generation
-  static Goal randomGoal() {
+  static Goal randomGoal({onCompleted}) {
     var r = new Random();
     var randInt = r.nextInt(1); // Change to 1 if shorter phrases desired.
     var message;
@@ -31,7 +34,7 @@ class Goal extends StatefulWidget {
     } else {
       message = "ERROR: Contact a system administrator.";
     }
-    return new Goal(message: message);
+    return new Goal(message: message, onCompleted: onCompleted);
   }
 
   // Hardcoded Goal Values
@@ -124,12 +127,12 @@ class _Goal extends State<Goal> {
 
   void completeGoal() {
     setState(() {
-      isCompleted = ! isCompleted;
+      if (!isCompleted) {
+        isCompleted = true;
+        widget.onCompleted();
+      }
     });
   }
-
-  
-
 
   @override
   Widget build(BuildContext context) {
@@ -182,35 +185,15 @@ class _Goal extends State<Goal> {
   }
 }
 
-class User {
-  String key;
-  int score;
-  String gmailaccount;
-  int streak;
 
-  User(this.score, this.gmailaccount, this.streak);
-
-  User.fromSnapshot(DataSnapshot snapshot)
-    : key = snapshot.key,
-      score = snapshot.value["score"].toInt(),
-      streak = snapshot.value["streak"].toInt(),
-      gmailaccount = snapshot.value["gmailaccount"];
-
-  toJson() {
-    return {
-      "score": score,
-      "gmail": gmailaccount,
-      "streak": streak
-    };
-  }
-}
 
 class MainPage extends StatefulWidget {
   final GoogleSignIn googleSignIn;
   final isDebug = false;
-  final userReference = FirebaseDatabase.instance.reference().child('users');
+  final User currentUser;
+  
 
-  MainPage({Key key, this.googleSignIn}) : super(key: key);
+  MainPage({Key key, this.googleSignIn, this.currentUser}) : super(key: key);
 
   @override
   _MainPage createState() => new _MainPage();
@@ -218,19 +201,39 @@ class MainPage extends StatefulWidget {
 
 class _MainPage extends State<MainPage> {
 
-  _MainPage() {
-    // widget.userReference.onChildAdded.listen(_onUserAdded);
-    // widget.userReference.onChildChanged.listen(_onUserChanged);
+  User currentUser;
+
+  Goal goal1, goal2, goal3;
+
+  @override
+  void initState() {
+    super.initState();
+
+    goal1 = Goal.randomGoal(onCompleted: incrementScore);
+    goal2 = Goal.randomGoal(onCompleted: incrementScore);
+    goal3 = Goal.randomGoal(onCompleted: incrementScore);
+
+    currentUser = widget.currentUser;
+    userReference.child(widget.googleSignIn.currentUser.id).onValue.listen(_onUserChanged);
 
   }
 
-  // void _onUserAdded(Event e) {
+  void _onUserChanged(Event e) {
+    setState(() {
+      print("------" + e.snapshot.value.toString());
+      currentUser = new User.fromSnapshot(e.snapshot);      
+    });
+  }
 
-  // }
 
-  // void _onUserChanged(Event e) {
-
-  // }
+  void incrementScore() {
+    userReference.child(widget.googleSignIn.currentUser.id).set({
+      "key": currentUser.key,
+      "score": currentUser.score + 1,
+      "gmailaccount": currentUser.gmailaccount,
+      "streak": currentUser.streak
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -245,10 +248,8 @@ class _MainPage extends State<MainPage> {
                 new Container(
                     margin: const EdgeInsets.only(right: 16.0),
                     child: new GestureDetector(
-                      onTap: () {
-                        widget.userReference.push().set(new User(1285, "quidnovum@gmail.com", 85).toJson());
-                      },
                       child: !widget.isDebug ? new CircleAvatar(
+                        radius: 40.0,
                         backgroundImage:
                         new NetworkImage(widget.googleSignIn.currentUser.photoUrl)
                       ) : new Icon(
@@ -275,7 +276,7 @@ class _MainPage extends State<MainPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     new Text(
-                      "1285|",
+                      currentUser.score.toString(),
                       style: new TextStyle(
                         color: _midPurple,
                         fontSize: 20.0,
@@ -324,6 +325,8 @@ class _MainPage extends State<MainPage> {
       );
     }
 
+    
+
     Widget buildGoals() {
       return new Container(
         padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
@@ -338,9 +341,7 @@ class _MainPage extends State<MainPage> {
         child: new Column(
           children: <Widget>[
             buildDailyGoalsHeader(),
-            Goal.randomGoal(),
-            Goal.randomGoal(),
-            Goal.randomGoal()
+            goal1, goal2, goal3
             // new Goal(message: "Compliment one person"),
             // new Goal(message: "High five your best friend"),
             // new Goal(message: "Perform a jig")
@@ -348,6 +349,7 @@ class _MainPage extends State<MainPage> {
         )
       );
     }
+
     return new Scaffold(
       body: new Container(
         decoration: new BoxDecoration(

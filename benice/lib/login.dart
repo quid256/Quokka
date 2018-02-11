@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:async';
+import 'db.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 // Google - Firebase Login
@@ -33,7 +34,10 @@ class LoginPage extends StatefulWidget {
 
   final GoogleSignIn googleSignIn;
   final FirebaseAuth auth;
-  LoginPage({Key key, this.googleSignIn, this.auth}) : super(key: key);
+
+  final onSignedIn;
+
+  LoginPage({Key key, this.googleSignIn, this.auth, this.onSignedIn}) : super(key: key);
 
 
   @override
@@ -42,10 +46,31 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPage extends State<LoginPage> {
 
+
   void onLoginButtonPressed(BuildContext context) {
     _ensureLoggedIn(widget.googleSignIn, widget.auth)
     ..then((_) {
-      Navigator.of(context).pop();
+      User _currentUser;
+
+      userReference.child(widget.googleSignIn.currentUser.id).onValue.listen((ev) {
+        if (ev.snapshot.value == null) {
+          _currentUser = new User(
+            0,
+            widget.googleSignIn.currentUser.email,
+            0
+          );
+
+          userReference.child(widget.googleSignIn.currentUser.id).set(
+            _currentUser.toJson()
+          );
+          
+        } else {
+          _currentUser = new User.fromSnapshot(ev.snapshot);
+        }
+
+        widget.onSignedIn(_currentUser);
+
+      });
     })
     ..catchError(() {
       print("Unable to sign into google acct");
