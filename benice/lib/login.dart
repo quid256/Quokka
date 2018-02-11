@@ -1,4 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+
+// Google - Firebase Login
+final googleSignIn = new GoogleSignIn();
+final auth = FirebaseAuth.instance;
+
+Future<Null> _ensureLoggedIn() async {
+  GoogleSignInAccount user = googleSignIn.currentUser;
+  if (user == null)
+    user = await googleSignIn.signInSilently();
+  if (user == null) {
+    await googleSignIn.signIn();
+  }
+  if (await auth.currentUser() == null) {                          //new
+    GoogleSignInAuthentication credentials =                       //new
+    await googleSignIn.currentUser.authentication;                 //new
+    await auth.signInWithGoogle(                                   //new
+      idToken: credentials.idToken,                                //new
+      accessToken: credentials.accessToken,                        //new
+    );                                                             //new
+  }                                                               //new
+}
 
 Color _lightPurple = Colors.deepPurple[200];
 Color _midPurple   = Colors.deepPurple[300];
@@ -7,9 +31,8 @@ Color _darkPurple  = Colors.deepPurple[400];
 
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key, this.title}) : super(key: key);
+  LoginPage({Key key}) : super(key: key);
 
-  final String title;
 
   @override
   _LoginPage createState() => new _LoginPage();
@@ -17,52 +40,66 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPage extends State<LoginPage> {
 
+  void onLoginButtonPressed(BuildContext context) {
+    _ensureLoggedIn()
+    ..then((_) {
+      Navigator.of(context).pop();
+    })
+    ..catchError(() {
+      print("Unable to sign into google acct");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
+    Widget buildLoginButton() {
+      return new GestureDetector(
+        onTap: () => onLoginButtonPressed(context),
+        child: new Container(
+          decoration: new BoxDecoration(
+            borderRadius: new BorderRadius.all(new Radius.circular(10.0)),
+            color: Colors.white
+          ),
+          margin: new EdgeInsets.only(top: 50.0),
+          padding: const EdgeInsets.all(10.0),
+          child: new Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              new Text(
+                "Sign in",
+                style: new TextStyle(
+                  color: _midPurple,
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.w300,
+                  fontFamily: "Open Sans"
+                )
+              )
+            ],
+          )
+        )
+      );
+    }
+
     Widget loginScreen() {
       return new Expanded(
-          child: new Center(
-              child: new Container(
-                  child: new Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      new Icon(
-                         Icons.account_circle,
-                         size: 350.0,
-                         color: Colors.white
-                      ),
-                      new GestureDetector(
-                      onTap: null,
-                      child: new Container(
-                          decoration: new BoxDecoration(
-                          borderRadius: new BorderRadius.all(new Radius.circular(10.0)),
-                          color: Colors.white
-                          ),
-                          margin: new EdgeInsets.only(top: 50.0),
-                          padding: const EdgeInsets.all(10.0),
-                          child: new Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Text(
-                                "Sign in",
-                                style: new TextStyle(
-                                color: _midPurple,
-                                fontSize: 40.0,
-                                fontWeight: FontWeight.w300,
-                                fontFamily: "Open Sans"
-                                )
-                              )
-                             ],
-                            )
-                          )
-                         )
-      ]
-      )
-      )
-      )
+        child: new Center(
+          child: new Container(
+            child: new Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                new Icon(
+                  Icons.account_circle,
+                  size: 350.0,
+                  color: Colors.white
+                ),
+                buildLoginButton()
+              ]
+            )
+          )
+        )
       );
-        }
+    }
 
 
     return new Scaffold(

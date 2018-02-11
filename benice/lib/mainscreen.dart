@@ -12,31 +12,20 @@ class Goal extends StatefulWidget {
 
   @override
   _Goal createState() => new _Goal();
-}
-
-class _Goal extends State<Goal> {
-
-  bool isCompleted = false;  
-
-  void completeGoal() {
-    setState(() {
-      isCompleted = ! isCompleted;
-    });
-  }
 
   // Random Goal Generation
-  Goal randomGoal() {
+  static Goal randomGoal() {
     var r = new Random();
-    var randInt = r.nextInt(4); // Change to 1 if shorter phrases desired.
+    var randInt = r.nextInt(1); // Change to 1 if shorter phrases desired.
     var message;
     if (randInt < 1) {
-      message = getAction(r) + " " + getPerson(r) + ".";
+      message = _getAction(r) + " " + _getPerson(r) + ".";
     } else if (randInt < 2) {
-      message = getPhraseStart(r) + " " + getPhraseEnd(r) + ".";
+      message = _getPhraseStart(r) + " " + _getPhraseEnd(r) + ".";
     } else if (randInt < 3) {
-      message = getNounStart(r) + " " + getNounEnd(r) + ".";
+      message = _getNounStart(r) + " " + _getNounEnd(r) + ".";
     } else if (randInt < 4) {
-      message = getGerundStart(r) + " " + getGerundEnd(r) + ".";
+      message = _getGerundStart(r) + " " + _getGerundEnd(r) + ".";
     } else {
       message = "ERROR: Contact a system administrator.";
     }
@@ -44,7 +33,7 @@ class _Goal extends State<Goal> {
   }
 
   // Hardcoded Goal Values
-  String getGerundStart(Random r) {
+  static String _getGerundStart(Random r) {
     var gs = [
       "Do something kind by",
       "Take a break from the usual by",
@@ -52,7 +41,7 @@ class _Goal extends State<Goal> {
     ];
     return gs[r.nextInt(gs.length)];
   }
-  String getGerundEnd(Random r) {
+  static String _getGerundEnd(Random r) {
     var ge = [
       "saying hello to a stranger",
       "treating yourself",
@@ -63,7 +52,7 @@ class _Goal extends State<Goal> {
     return ge[r.nextInt(ge.length)];
   }
 
-  String getPhraseStart(Random r) {
+  static String _getPhraseStart(Random r) {
     var ps = [
       "Tell a stranger",
       "Tell a friend",
@@ -71,7 +60,7 @@ class _Goal extends State<Goal> {
     ];
     return ps[r.nextInt(ps.length)];
   }
-  String getPhraseEnd(Random r) {
+  static String _getPhraseEnd(Random r) {
     var pe = [
       "you love them",
       "they look nice",
@@ -80,7 +69,7 @@ class _Goal extends State<Goal> {
     return pe[r.nextInt(pe.length)];
   }
 
-  String getNounStart(Random r) {
+  static String _getNounStart(Random r) {
     var ns = [
       "Brighten someone's day by giving them",
       "Make someone smile by sharing",
@@ -89,7 +78,8 @@ class _Goal extends State<Goal> {
     ];
     return ns[r.nextInt(ns.length)];
   }
-  String getNounEnd(Random r) {
+  
+  static String _getNounEnd(Random r) {
     var ne = [
       "a compliment",
       "a nice memory",
@@ -99,7 +89,7 @@ class _Goal extends State<Goal> {
     return ne[r.nextInt(ne.length)];
   }
 
-  String getAction(Random r) {
+  static String _getAction(Random r) {
     var v = [
       "Compliment",
       "High-five",
@@ -112,7 +102,8 @@ class _Goal extends State<Goal> {
     ];
     return v[r.nextInt(v.length)];
   }
-  String getPerson(Random r) {
+  
+  static String _getPerson(Random r) {
     var p = [
       "a friend",
       "a loved one",
@@ -123,10 +114,20 @@ class _Goal extends State<Goal> {
     ];
     return p[r.nextInt(p.length)];
   }
+}
 
-  void main() {
-    print(randomGoal());
+class _Goal extends State<Goal> {
+
+  bool isCompleted = false;  
+
+  void completeGoal() {
+    setState(() {
+      isCompleted = ! isCompleted;
+    });
   }
+
+  
+
 
   @override
   Widget build(BuildContext context) {
@@ -242,28 +243,30 @@ class _MainPage extends State<MainPage> {
 
     Widget buildDailyGoalsHeader() {
       return new Row(
-        children: <Widget>[new Container(
-          decoration: new BoxDecoration(
-            borderRadius: new BorderRadius.all(new Radius.circular(30.0)),
-            color: Colors.white
-          ),
-          padding: new EdgeInsets.symmetric(vertical: 12.0, horizontal: 17.0),
-          margin: new EdgeInsets.only(top: 5.0, bottom: 5.0),
-          child: new Row(
-            children: <Widget>[
-              new Icon(Icons.bookmark, color: _midPurple, size: 30.0),
-              new Text(
-                " daily goals",
-                style: new TextStyle(
-                  color: _midPurple,
-                  fontSize: 25.0,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: "Open Sans"
-                ),
-              )
-            ],
+        children: <Widget>[
+          new Container(
+            decoration: new BoxDecoration(
+              borderRadius: new BorderRadius.all(new Radius.circular(30.0)),
+              color: Colors.white
+            ),
+            padding: new EdgeInsets.symmetric(vertical: 12.0, horizontal: 17.0),
+            margin: new EdgeInsets.only(top: 5.0, bottom: 5.0),
+            child: new Row(
+              children: <Widget>[
+                new Icon(Icons.bookmark, color: _midPurple, size: 30.0),
+                new Text(
+                  " daily goals",
+                  style: new TextStyle(
+                    color: _midPurple,
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: "Open Sans"
+                  ),
+                )
+              ],
+            )
           )
-        )],
+        ],
       );
     }
 
@@ -281,9 +284,12 @@ class _MainPage extends State<MainPage> {
         child: new Column(
           children: <Widget>[
             buildDailyGoalsHeader(),
-            new Goal(message: "Compliment one person"),
-            new Goal(message: "High five your best friend"),
-            new Goal(message: "Perform a jig")
+            Goal.randomGoal(),
+            Goal.randomGoal(),
+            Goal.randomGoal()
+            // new Goal(message: "Compliment one person"),
+            // new Goal(message: "High five your best friend"),
+            // new Goal(message: "Perform a jig")
           ],
         )
       );
