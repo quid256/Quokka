@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'mainscreen.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 void main() => runApp(new MyApp());
+
+// Google - Firebase Login
+final googleSignIn = new GoogleSignIn();
+import 'dart:async';
+
+Future<Null> _ensureLoggedIn() async {
+  GoogleSignInAccount user = googleSignIn.currentUser;
+  if (user == null)
+    user = await googleSignIn.signInSilently();
+  if (user == null) {
+    await googleSignIn.signIn();
+  }
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
