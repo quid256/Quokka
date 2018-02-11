@@ -6,18 +6,37 @@ Color _darkPurple  = Colors.deepPurple[400];
 
 class Goal extends StatefulWidget {
   final String message;
-  final Function onPressed;
-  Goal({Key key, this.message, this.onPressed }) : super(key: key);
+  Goal({Key key, this.message }) : super(key: key);
 
   @override
   _Goal createState() => new _Goal();
 }
 
 class _Goal extends State<Goal> {
+
+  bool isCompleted = false;  
+
+  void completeGoal() {
+    setState(() {
+      isCompleted = ! isCompleted;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    Color bgColor, accentColor;
+    if (isCompleted) {
+      bgColor = Colors.deepPurple[100];
+      accentColor = Colors.white;
+    } else {
+      bgColor = Colors.white;
+      accentColor = _midPurple;
+    }
+
+
     return new GestureDetector(
-      onTap: widget.onPressed,
+      onTapDown: (tdd) => completeGoal(),
       child: new Container(
         decoration: new BoxDecoration(
           borderRadius: new BorderRadius.only(
@@ -25,15 +44,15 @@ class _Goal extends State<Goal> {
             bottomRight: new Radius.circular(50.0),
             bottomLeft: new Radius.circular(50.0)
           ),
-          color: Colors.white
+          color: bgColor
         ),
         margin: const EdgeInsets.symmetric(vertical: 7.0),
         child: new Row(
           children: <Widget>[
             new IconButton(
               icon: new Icon(
-                Icons.check_circle,
-                color: _midPurple,
+                isCompleted ? Icons.check_circle : Icons.fiber_manual_record,
+                color: accentColor,
               ),
               iconSize: 60.0,
               onPressed: null,
@@ -41,9 +60,9 @@ class _Goal extends State<Goal> {
             new Text(
               widget.message,
               style: new TextStyle(
-                color: _midPurple,
+                color: accentColor,
                 fontSize: 20.0,
-                fontWeight: FontWeight.w300,
+                fontWeight: isCompleted ? FontWeight.w400 : FontWeight.w300,
                 fontFamily: "Open Sans"
               )
             )
