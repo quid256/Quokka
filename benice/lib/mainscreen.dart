@@ -3,7 +3,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:math';
 
-
 Color _lightPurple = Colors.deepPurple[200];
 Color _midPurple   = Colors.deepPurple[300];
 Color _darkPurple  = Colors.deepPurple[400];
@@ -243,19 +242,21 @@ class _MainPage extends State<MainPage> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 new Container(
-                    margin: const EdgeInsets.only(right: 16.0),
+                    margin: const EdgeInsets.only(right: 16.0, bottom: 10.0),
                     child: new GestureDetector(
                       onTap: () {
                         widget.userReference.push().set(new User(1285, "quidnovum@gmail.com", 85).toJson());
                       },
-                      child: !widget.isDebug ? new CircleAvatar(
-                        backgroundImage:
-                        new NetworkImage(widget.googleSignIn.currentUser.photoUrl)
-                      ) : new Icon(
-                        Icons.account_circle,
-                        size: 200.0
+                      child: !widget.isDebug ?
+                        new CircleAvatar2(
+                          radius: 135.0,
+                          backgroundImage:
+                            new NetworkImage(widget.googleSignIn.currentUser.photoUrl)
+                        ) : new Icon(
+                          Icons.account_circle,
+                          size: 200.0
+                        )
                       )
-                    )
                     
                     
                 ),
@@ -265,7 +266,7 @@ class _MainPage extends State<MainPage> {
                     !widget.isDebug ? widget.googleSignIn.currentUser.displayName : "john doe",
                     style: new TextStyle(
                       color: _darkPurple,
-                      fontSize: 25.0,
+                      fontSize: 30.0,
                       fontWeight: FontWeight.w400,
                       fontFamily: "Open Sans"
                     )
@@ -278,8 +279,8 @@ class _MainPage extends State<MainPage> {
                       "1285|",
                       style: new TextStyle(
                         color: _midPurple,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w300,
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.w900,
                         fontFamily: "Open Sans"
                       )
                     )
@@ -365,6 +366,102 @@ class _MainPage extends State<MainPage> {
         )
       )
       
+    );
+  }
+}
+
+// Alternative CircleAvatar w/ Fitted Image
+class CircleAvatar2 extends StatelessWidget {
+  /// Creates a circle that represents a user.
+  const CircleAvatar2({
+    Key key,
+    this.child,
+    this.backgroundColor,
+    this.backgroundImage,
+    this.foregroundColor,
+    this.radius: 20.0,
+    this.fit: BoxFit.cover,
+  })
+      : super(key: key);
+
+  /// The widget below this widget in the tree.
+  ///
+  /// Typically a [Text] widget. If the [CircleAvatar] is to have an image, use
+  /// [backgroundImage] instead.
+  final Widget child;
+
+  /// The color with which to fill the circle. Changing the background
+  /// color will cause the avatar to animate to the new color.
+  ///
+  /// If a background color is not specified, the theme's primary color is used.
+  final Color backgroundColor;
+
+  /// The default text color for text in the circle.
+  ///
+  /// Falls back to white if a background color is specified, or the primary
+  /// text theme color otherwise.
+  final Color foregroundColor;
+
+  /// The background image of the circle. Changing the background
+  /// image will cause the avatar to animate to the new image.
+  ///
+  /// If the [CircleAvatar] is to have the user's initials, use [child] instead.
+  final ImageProvider backgroundImage;
+
+  /// The size of the avatar. Changing the radius will cause the
+  /// avatar to animate to the new size.
+  ///
+  /// Defaults to 20 logical pixels.
+  final double radius;
+
+  /// Avatar Image BoxFit.
+  ///
+  /// Defaults to cover.
+  final BoxFit fit;
+
+  @override
+  Widget build(BuildContext context) {
+    assert(debugCheckHasMediaQuery(context));
+    final ThemeData theme = Theme.of(context);
+    TextStyle textStyle = theme.primaryTextTheme.title;
+    if (foregroundColor != null) {
+      textStyle = textStyle.copyWith(color: foregroundColor);
+    } else if (backgroundColor != null) {
+      switch (ThemeData.estimateBrightnessForColor(backgroundColor)) {
+        case Brightness.dark:
+          textStyle = textStyle.copyWith(color: Colors.white);
+          break;
+        case Brightness.light:
+          textStyle = textStyle.copyWith(color: Colors.black);
+          break;
+      }
+    }
+    return new AnimatedContainer(
+      width: radius * 2.0,
+      height: radius * 2.0,
+      duration: kThemeChangeDuration,
+      decoration: new BoxDecoration(
+        color: backgroundColor ?? theme.primaryColor,
+        image: backgroundImage != null
+            ? new DecorationImage(
+          image: backgroundImage,
+          fit: fit,
+        )
+            : null,
+        shape: BoxShape.circle,
+      ),
+      child: child != null
+          ? new Center(
+          child: new MediaQuery(
+            // Need to reset the textScaleFactor here so that the
+            // text doesn't escape the avatar when the textScaleFactor is large.
+            data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+            child: new DefaultTextStyle(
+              style: textStyle.copyWith(color: foregroundColor),
+              child: child,
+            ),
+          ))
+          : null,
     );
   }
 }
