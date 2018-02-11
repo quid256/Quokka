@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'login.dart';
 import 'mainscreen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';         //new
+import 'package:firebase_database/ui/firebase_animated_list.dart'; //new
 
 void main() => runApp(new MyApp());
 
 // Google - Firebase Login
 final googleSignIn = new GoogleSignIn();
-import 'dart:async';
+final auth = FirebaseAuth.instance;
 
 Future<Null> _ensureLoggedIn() async {
   GoogleSignInAccount user = googleSignIn.currentUser;
@@ -16,6 +20,14 @@ Future<Null> _ensureLoggedIn() async {
   if (user == null) {
     await googleSignIn.signIn();
   }
+  if (await auth.currentUser() == null) {                          //new
+    GoogleSignInAuthentication credentials =                       //new
+    await googleSignIn.currentUser.authentication;                 //new
+    await auth.signInWithGoogle(                                   //new
+      idToken: credentials.idToken,                                //new
+      accessToken: credentials.accessToken,                        //new
+    );                                                             //new
+  }                                                               //new
 }
 
 class MyApp extends StatelessWidget {
@@ -35,7 +47,7 @@ class MyApp extends StatelessWidget {
         // counter didn't reset back to zero; the application is not restarted.
         primarySwatch: Colors.deepOrange,
       ),
-      home: new MainPage(title: 'Flutter Demo Home Page'),
+      home: new LoginPage(title: 'Flutter Demo Home Page'),
     );
   }
 }
