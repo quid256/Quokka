@@ -22,7 +22,7 @@ class _LoginPage extends State<LoginPage> {
       return new Expanded(
         child: new Container(
             padding: const EdgeInsets.all(32.0),
-            child: new Text("helooo")
+            child: new Text("Sign In")
         ),
       );
     }
