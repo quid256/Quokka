@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
+
 
 Color _lightPurple = Colors.deepPurple[200];
 Color _midPurple   = Colors.deepPurple[300];
@@ -20,6 +22,110 @@ class _Goal extends State<Goal> {
     setState(() {
       isCompleted = ! isCompleted;
     });
+  }
+
+  // Random Goal Generation
+  Goal randomGoal() {
+    var r = new Random();
+    var randInt = r.nextInt(4); // Change to 1 if shorter phrases desired.
+    var message;
+    if (randInt < 1) {
+      message = getAction(r) + " " + getPerson(r) + ".";
+    } else if (randInt < 2) {
+      message = getPhraseStart(r) + " " + getPhraseEnd(r) + ".";
+    } else if (randInt < 3) {
+      message = getNounStart(r) + " " + getNounEnd(r) + ".";
+    } else if (randInt < 4) {
+      message = getGerundStart(r) + " " + getGerundEnd(r) + ".";
+    } else {
+      message = "ERROR: Contact a system administrator.";
+    }
+    return new Goal(message: message);
+  }
+
+  // Hardcoded Goal Values
+  String getGerundStart(Random r) {
+    var gs = [
+      "Do something kind by",
+      "Take a break from the usual by",
+      "Brighten someone's day by"
+    ];
+    return gs[r.nextInt(gs.length)];
+  }
+  String getGerundEnd(Random r) {
+    var ge = [
+      "saying hello to a stranger",
+      "treating yourself",
+      "hugging someone important",
+      "starting a meaningful conversation",
+      "encouraging a friend in need"
+    ];
+    return ge[r.nextInt(ge.length)];
+  }
+
+  String getPhraseStart(Random r) {
+    var ps = [
+      "Tell a stranger",
+      "Tell a friend",
+      "Brighten someone's day by telling them"
+    ];
+    return ps[r.nextInt(ps.length)];
+  }
+  String getPhraseEnd(Random r) {
+    var pe = [
+      "you love them",
+      "they look nice",
+      "you're happy to see them"
+    ];
+    return pe[r.nextInt(pe.length)];
+  }
+
+  String getNounStart(Random r) {
+    var ns = [
+      "Brighten someone's day by giving them",
+      "Make someone smile by sharing",
+      "Give a friend",
+      "Give a stranger"
+    ];
+    return ns[r.nextInt(ns.length)];
+  }
+  String getNounEnd(Random r) {
+    var ne = [
+      "a compliment",
+      "a nice memory",
+      "something you made",
+      "something that would make you smile"
+    ];
+    return ne[r.nextInt(ne.length)];
+  }
+
+  String getAction(Random r) {
+    var v = [
+      "Compliment",
+      "High-five",
+      "Laugh with",
+      "Encourage",
+      "Joke with",
+      "Smile at",
+      "Talk with",
+      "Listen to"
+    ];
+    return v[r.nextInt(v.length)];
+  }
+  String getPerson(Random r) {
+    var p = [
+      "a friend",
+      "a loved one",
+      "a stranger",
+      "a family member",
+      "your best friend",
+      "an acquaintance"
+    ];
+    return p[r.nextInt(p.length)];
+  }
+
+  void main() {
+    print(randomGoal());
   }
 
   @override
